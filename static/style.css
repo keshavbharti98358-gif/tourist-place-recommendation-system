@@ -103,8 +103,6 @@ h1 {
 .hero:not(.compact) h1 {
     color: #0f2f3d;
     background: none;
-    border-left: 8px solid #0f766e;
-    padding-left: 18px;
 }
 
 .intro {
