@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#7dd3fc"/>
+  <circle cx="540" cy="78" r="46" fill="#fde68a"/>
+  <path d="M0 240 C120 205 190 270 310 235 C420 204 505 245 640 210 L640 400 L0 400 Z" fill="#38bdf8"/>
+  <path d="M0 302 C120 265 250 318 380 280 C500 245 565 286 640 260 L640 400 L0 400 Z" fill="#f7d794"/>
+  <path d="M115 230 C135 175 185 145 235 132" stroke="#7c2d12" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M232 132 C188 110 154 118 132 146 C170 148 205 145 232 132Z" fill="#16a34a"/>
+  <path d="M234 132 C216 92 185 76 150 83 C174 110 203 127 234 132Z" fill="#22c55e"/>
+  <path d="M236 133 C270 100 306 94 335 110 C303 132 269 140 236 133Z" fill="#15803d"/>
+  <text x="38" y="70" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#075985">Beach Destination</text>
+</svg>

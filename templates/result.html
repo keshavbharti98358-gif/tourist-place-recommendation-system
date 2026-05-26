@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="app-shell">
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark Mode</button>
+
+        <section class="hero compact">
+            <p class="eyebrow">Recommendation Result</p>
+            <h1>Your Best Tourist Matches</h1>
+            <p class="intro">
+                The system compared your preferences with the tourist-place database and applied expert rules.
+            </p>
+            <a class="top-back-link" href="{{ url_for('home') }}">Back to form</a>
+        </section>
+
+        <section class="panel">
+            <div class="summary editable-summary" aria-label="Edit recommendation preferences">
+                <label class="summary-control">
+                    <span>Budget</span>
+                    <select name="budget" data-filter-select>
+                        {% for option in filter_options.budget %}
+                        <option value="{{ option }}" {% if user_input.budget == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="summary-control">
+                    <span>Climate</span>
+                    <select name="climate" data-filter-select>
+                        {% for option in filter_options.climate %}
+                        <option value="{{ option }}" {% if user_input.climate == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="summary-control">
+                    <span>Type</span>
+                    <select name="type" data-filter-select>
+                        {% for option in filter_options.type %}
+                        <option value="{{ option }}" {% if user_input.type == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="summary-control">
+                    <span>Season</span>
+                    <select name="season" data-filter-select>
+                        {% for option in filter_options.season %}
+                        <option value="{{ option }}" {% if user_input.season == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="summary-control">
+                    <span>Activity</span>
+                    <select name="activity" data-filter-select>
+                        {% for option in filter_options.activity %}
+                        <option value="{{ option }}" {% if user_input.activity == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="summary-control">
+                    <span>Sort</span>
+                    <select name="sort" data-filter-select>
+                        {% for value, label in filter_options.sort %}
+                        <option value="{{ value }}" {% if user_input.sort == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+
+            <p class="refresh-status" data-refresh-status aria-live="polite"></p>
+
+            <div class="results-list" data-results-list>
+                {% for item in recommendations %}
+                <article class="result-card {{ item.place.card_theme }} {% if loop.first %}top-result{% endif %}">
+                    <img class="place-image" src="{{ url_for('static', filename=item.place.image_file) }}" alt="{{ item.place.place }}">
+                    <div class="result-main">
+                        <div class="result-heading">
+                            <p class="rank">Match {{ loop.index }}</p>
+                            <span class="match-badge" data-match-percent="{{ item.match_percent }}">0% Match</span>
+                        </div>
+                        <h2>{{ item.place.place }}</h2>
+                        <p>{{ item.place.description }}</p>
+                        <div class="tag-row">
+                            <span>{{ item.place.type }}</span>
+                            <span>{{ item.place.budget }} Budget</span>
+                            <span>Rating {{ item.place.rating }}/5</span>
+                            <span>{{ item.place.popularity }} Popularity</span>
+                        </div>
+                    </div>
+                    <dl>
+                        <div><dt>Climate</dt><dd>{{ item.place.climate }}</dd></div>
+                        <div><dt>Budget</dt><dd>{{ item.place.budget }}</dd></div>
+                        <div><dt>Type</dt><dd>{{ item.place.type }}</dd></div>
+                        <div><dt>Season</dt><dd>{{ item.place.season }}</dd></div>
+                        <div><dt>Activity</dt><dd>{{ item.place.activity }}</dd></div>
+                    </dl>
+                    <div class="travel-info">
+                        <p><strong>Usual cost range:</strong> {{ item.place.cost_range }}</p>
+                        <p><strong>Visitor feedback:</strong> {{ item.place.feedback }}</p>
+                    </div>
+                    <div class="nearby-info">
+                        <div>
+                            <strong>Nearby attractions</strong>
+                            <ul>
+                                {% for attraction in item.place.attractions %}
+                                <li>{{ attraction }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Hotel suggestions</strong>
+                            <ul>
+                                {% for hotel in item.place.hotels %}
+                                <li>{{ hotel }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="reasons">
+                        Reasons:
+                        {% if item.reasons %}
+                            {{ item.reasons | join(", ") }}
+                        {% else %}
+                            closest available match
+                        {% endif %}
+                    </p>
+                </article>
+                {% endfor %}
+            </div>
+
+            <a class="back-link" href="{{ url_for('home') }}">Try another recommendation</a>
+        </section>
+    </main>
+
+    <script>
+        const themeToggle = document.querySelector("[data-theme-toggle]");
+        const savedTheme = localStorage.getItem("tprs-theme");
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
+            themeToggle.textContent = "Light Mode";
+        }
+        themeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            const isDark = document.body.classList.contains("dark-mode");
+            localStorage.setItem("tprs-theme", isDark ? "dark" : "light");
+            themeToggle.textContent = isDark ? "Light Mode" : "Dark Mode";
+        });
+
+        const resultsList = document.querySelector("[data-results-list]");
+        const filterSelects = document.querySelectorAll("[data-filter-select]");
+        const refreshStatus = document.querySelector("[data-refresh-status]");
+        const staticBase = "{{ url_for('static', filename='') }}";
+
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function renderList(items) {
+            if (!items.length) {
+                resultsList.innerHTML = `<div class="empty-results">No matching places found. Try changing your preferences.</div>`;
+                return;
+            }
+
+            resultsList.innerHTML = items.map((item, index) => {
+                const place = item.place;
+                const attractions = (place.attractions || []).map((attraction) => `<li>${escapeHTML(attraction)}</li>`).join("");
+                const hotels = (place.hotels || []).map((hotel) => `<li>${escapeHTML(hotel)}</li>`).join("");
+                const reasons = item.reasons && item.reasons.length
+                    ? item.reasons.map(escapeHTML).join(", ")
+                    : "closest available match";
+
+                return `
+                    <article class="result-card ${escapeHTML(place.card_theme)} ${index === 0 ? "top-result" : ""}">
+                        <img class="place-image" src="${staticBase}${escapeHTML(place.image_file)}" alt="${escapeHTML(place.place)}">
+                        <div class="result-main">
+                            <div class="result-heading">
+                                <p class="rank">Match ${index + 1}</p>
+                                <span class="match-badge" data-match-percent="${item.match_percent}">0% Match</span>
+                            </div>
+                            <h2>${escapeHTML(place.place)}</h2>
+                            <p>${escapeHTML(place.description)}</p>
+                            <div class="tag-row">
+                                <span>${escapeHTML(place.type)}</span>
+                                <span>${escapeHTML(place.budget)} Budget</span>
+                                <span>Rating ${escapeHTML(place.rating)}/5</span>
+                                <span>${escapeHTML(place.popularity)} Popularity</span>
+                            </div>
+                        </div>
+                        <dl>
+                            <div><dt>Climate</dt><dd>${escapeHTML(place.climate)}</dd></div>
+                            <div><dt>Budget</dt><dd>${escapeHTML(place.budget)}</dd></div>
+                            <div><dt>Type</dt><dd>${escapeHTML(place.type)}</dd></div>
+                            <div><dt>Season</dt><dd>${escapeHTML(place.season)}</dd></div>
+                            <div><dt>Activity</dt><dd>${escapeHTML(place.activity)}</dd></div>
+                        </dl>
+                        <div class="travel-info">
+                            <p><strong>Usual cost range:</strong> ${escapeHTML(place.cost_range)}</p>
+                            <p><strong>Visitor feedback:</strong> ${escapeHTML(place.feedback)}</p>
+                        </div>
+                        <div class="nearby-info">
+                            <div>
+                                <strong>Nearby attractions</strong>
+                                <ul>${attractions}</ul>
+                            </div>
+                            <div>
+                                <strong>Hotel suggestions</strong>
+                                <ul>${hotels}</ul>
+                            </div>
+                        </div>
+                        <p class="reasons">Reasons: ${reasons}</p>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        function animateMatchBadges() {
+            const matchBadges = document.querySelectorAll("[data-match-percent]");
+            matchBadges.forEach((badge) => {
+                const target = Number(badge.dataset.matchPercent);
+                const duration = 850;
+                const startTime = performance.now();
+
+                function animateCount(now) {
+                    const progress = Math.min((now - startTime) / duration, 1);
+                    const easedProgress = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = Math.round(target * easedProgress);
+                    badge.textContent = `${currentValue}% Match`;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateCount);
+                    }
+                }
+
+                requestAnimationFrame(animateCount);
+            });
+        }
+
+        function currentFilters() {
+            return Array.from(filterSelects).reduce((filters, select) => {
+                filters[select.name] = select.value;
+                return filters;
+            }, {});
+        }
+
+        async function refreshRecommendations() {
+            const filters = currentFilters();
+            resultsList.classList.add("is-refreshing");
+            refreshStatus.textContent = "Updating recommendations...";
+            filterSelects.forEach((select) => select.disabled = true);
+
+            try {
+                const response = await fetch("{{ url_for('api_recommend') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(filters),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Recommendation request failed");
+                }
+
+                const data = await response.json();
+                renderList(data.recommendations);
+                animateMatchBadges();
+                refreshStatus.textContent = "Recommendations updated.";
+            } catch (error) {
+                refreshStatus.textContent = "Could not update recommendations. Please try again.";
+            } finally {
+                resultsList.classList.remove("is-refreshing");
+                filterSelects.forEach((select) => select.disabled = false);
+                window.setTimeout(() => {
+                    if (refreshStatus.textContent === "Recommendations updated.") {
+                        refreshStatus.textContent = "";
+                    }
+                }, 1400);
+            }
+        }
+
+        filterSelects.forEach((select) => {
+            select.addEventListener("change", refreshRecommendations);
+        });
+
+        animateMatchBadges();
+    </script>
+</body>
+</html>

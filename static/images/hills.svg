@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#bfdbfe"/>
+  <circle cx="520" cy="80" r="42" fill="#fef3c7"/>
+  <path d="M0 285 L145 110 L280 285 Z" fill="#2563eb"/>
+  <path d="M170 285 L345 75 L545 285 Z" fill="#1d4ed8"/>
+  <path d="M360 285 L500 145 L640 285 Z" fill="#3b82f6"/>
+  <path d="M118 142 L145 110 L171 144 L145 134 Z" fill="#eff6ff"/>
+  <path d="M306 122 L345 75 L390 125 L346 111 Z" fill="#eff6ff"/>
+  <path d="M0 285 C130 255 210 320 340 288 C450 260 535 306 640 275 L640 400 L0 400 Z" fill="#86efac"/>
+  <text x="38" y="70" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#1e3a8a">Hill / Adventure</text>
+</svg>

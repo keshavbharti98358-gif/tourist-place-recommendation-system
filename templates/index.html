@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Place Recommendation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="app-shell">
+        <button class="theme-toggle" type="button" data-theme-toggle>🌙 Dark Mode</button>
+
+        <section class="hero">
+            <h1>Tourist Place Recommendation System</h1>
+            <p class="intro">
+                Select your travel preferences and the expert system will recommend tourist places.
+            </p>
+        </section>
+
+        <section class="random-destinations" aria-label="Explore random destinations">
+            <div class="section-heading">
+                <p class="eyebrow">Recommended For You</p>
+                <h2>Explore Random Destinations</h2>
+            </div>
+            <div class="featured-grid">
+            {% for place in featured_places %}
+            <article class="destination-card">
+                <div class="destination-image-frame">
+                    <img src="{{ url_for('static', filename=place.image_file) }}" alt="{{ place.place }}">
+                </div>
+                <div class="destination-card-content">
+                    <span>{{ place.type }}</span>
+                    <h2>{{ place.place }}</h2>
+                    <p>{{ place.description }}</p>
+                    <strong>⭐ {{ place.rating }}/5</strong>
+                </div>
+            </article>
+            {% endfor %}
+            </div>
+        </section>
+
+        <section class="panel">
+            <form action="{{ url_for('recommend') }}" method="post" class="form-grid">
+                <label>
+                    <span>💰 Budget</span>
+                    <select name="budget" required>
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>🌤 Climate</span>
+                    <select name="climate" required>
+                        <option value="Hot">Hot</option>
+                        <option value="Cold">Cold</option>
+                        <option value="Moderate" selected>Moderate</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>🏖 Place Type</span>
+                    <select name="type" required>
+                        <option value="Beach">Beach</option>
+                        <option value="Hill Station">Hill Station</option>
+                        <option value="Historical">Historical</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Religious">Religious</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>🗓 Season</span>
+                    <select name="season" required>
+                        <option value="Summer">Summer</option>
+                        <option value="Winter" selected>Winter</option>
+                        <option value="Monsoon">Monsoon</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>🎯 Activity</span>
+                    <select name="activity" required>
+                        <option value="Relaxation">Relaxation</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Culture">Culture</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Spiritual">Spiritual</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>↕ Sort Results</span>
+                    <select name="sort">
+                        <option value="best_match">Best Match</option>
+                        <option value="lowest_budget">Lowest Budget</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="climate">Best Climate Match</option>
+                    </select>
+                </label>
+
+                <button type="submit" data-submit-button>Recommend Place</button>
+            </form>
+
+        </section>
+
+        <section class="panel estimator-panel">
+            <div>
+                <p class="eyebrow">Budget Estimator</p>
+                <h2>Estimate Trip Cost</h2>
+            </div>
+            <div class="estimator-grid">
+                <label>
+                    <span>📍 Destination</span>
+                    <select data-estimator-destination>
+                        {% for place in places %}
+                        <option value="{{ place.place }}" data-budget="{{ place.budget }}">{{ place.place }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>
+                    <span>🗓 Days</span>
+                    <input type="number" min="1" max="30" value="3" data-estimator-days>
+                </label>
+                <label>
+                    <span>🚆 Transport</span>
+                    <select data-estimator-transport>
+                        <option value="2500">Train / Bus</option>
+                        <option value="6000">Flight</option>
+                        <option value="9000">Private Cab</option>
+                    </select>
+                </label>
+                <label>
+                    <span>🏨 Hotel Type</span>
+                    <select data-estimator-hotel>
+                        <option value="1800">Budget Hotel</option>
+                        <option value="3500">Comfort Hotel</option>
+                        <option value="6500">Premium Hotel</option>
+                    </select>
+                </label>
+            </div>
+            <output class="estimate-output" data-estimator-output>Estimated trip cost: Rs. 0</output>
+        </section>
+    </main>
+
+    <div class="loading-overlay" data-loading-overlay aria-live="polite" aria-hidden="true">
+        <div class="loading-box">
+            <span class="loading-spinner" aria-hidden="true"></span>
+            <p data-loading-message>Analyzing travel preferences...</p>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.querySelector("[data-theme-toggle]");
+        const savedTheme = localStorage.getItem("tprs-theme");
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
+            themeToggle.textContent = "☀ Light Mode";
+        }
+        themeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            const isDark = document.body.classList.contains("dark-mode");
+            localStorage.setItem("tprs-theme", isDark ? "dark" : "light");
+            themeToggle.textContent = isDark ? "☀ Light Mode" : "🌙 Dark Mode";
+        });
+
+        const form = document.querySelector(".form-grid");
+        const loadingOverlay = document.querySelector("[data-loading-overlay]");
+        const loadingMessage = document.querySelector("[data-loading-message]");
+        const submitButton = document.querySelector("[data-submit-button]");
+        const loadingMessages = [
+            "Comparing destinations...",
+            "Evaluating climate suitability...",
+            "Calculating match percentage...",
+            "Generating recommendations...",
+        ];
+        let loadingMessageTimer;
+
+        function hideLoadingOverlay() {
+            document.body.classList.remove("is-loading");
+            loadingOverlay.setAttribute("aria-hidden", "true");
+            submitButton.disabled = false;
+            clearInterval(loadingMessageTimer);
+            loadingMessage.textContent = "Analyzing travel preferences...";
+        }
+
+        function startLoadingMessages() {
+            let currentIndex = Math.floor(Math.random() * loadingMessages.length);
+            loadingMessage.textContent = loadingMessages[currentIndex];
+            clearInterval(loadingMessageTimer);
+            loadingMessageTimer = setInterval(() => {
+                currentIndex = (currentIndex + 1) % loadingMessages.length;
+                loadingMessage.textContent = loadingMessages[currentIndex];
+            }, 850);
+        }
+
+        form.addEventListener("submit", () => {
+            document.body.classList.add("is-loading");
+            loadingOverlay.setAttribute("aria-hidden", "false");
+            submitButton.disabled = true;
+            startLoadingMessages();
+        });
+
+        window.addEventListener("pageshow", () => {
+            hideLoadingOverlay();
+        });
+
+        const destination = document.querySelector("[data-estimator-destination]");
+        const days = document.querySelector("[data-estimator-days]");
+        const transport = document.querySelector("[data-estimator-transport]");
+        const hotel = document.querySelector("[data-estimator-hotel]");
+        const output = document.querySelector("[data-estimator-output]");
+        const baseByBudget = { Low: 1800, Medium: 3000, High: 5200 };
+
+        function updateEstimate() {
+            const selected = destination.options[destination.selectedIndex];
+            const base = baseByBudget[selected.dataset.budget] || 3000;
+            const total = Number(transport.value) + (Number(days.value) * (base + Number(hotel.value)));
+            output.textContent = `Estimated trip cost: Rs. ${total.toLocaleString("en-IN")}`;
+        }
+
+        [destination, days, transport, hotel].forEach((field) => field.addEventListener("input", updateEstimate));
+        updateEstimate();
+    </script>
+</body>
+</html>
