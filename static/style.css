@@ -110,13 +110,19 @@ body.dark-mode {
 .site-header {
     position: sticky;
     top: 0;
-    z-index: 900;
+    z-index: 1000;
+
+    width: 100%;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    width: min(100%, 1120px);
-    margin: 0 auto;
-    padding: 14px 20px 0;
+
+    padding: 16px 40px;
+
+    background: rgba(8, 15, 32, 0.75);
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .brand-mark {
@@ -156,7 +162,7 @@ body.dark-mode {
 .app-shell {
     width: min(100%, 980px);
     margin: 0 auto;
-    padding: 34px 20px 40px;
+    padding: 100px 20px 40px;
 }
 
 .theme-toggle {
