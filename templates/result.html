@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recommendation Result</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="app-shell">
+    <header class="site-header">
+        <a class="brand-mark" href="{{ url_for('home') }}" aria-label="TravelGuide home">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="TravelGuide logo">
+            <span>TravelGuide</span>
+        </a>
         <button class="theme-toggle" type="button" data-theme-toggle>Dark Mode</button>
+    </header>
 
+    <main class="app-shell">
         <section class="hero compact">
             <p class="eyebrow">Recommendation Result</p>
             <h1>Your Best Tourist Matches</h1>

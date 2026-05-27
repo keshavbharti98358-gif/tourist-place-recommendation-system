@@ -6,4 +6,3 @@ echo.
 echo Starting Tourist Place Recommendation System...
 python app.py
 pause
-

@@ -4,13 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tourist Place Recommendation System</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="app-shell">
-        <button class="theme-toggle" type="button" data-theme-toggle>🌙 Dark Mode</button>
+    <div class="splash-screen" data-splash-screen>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="TravelGuide logo">
+        <p>Loading Recommendations...</p>
+    </div>
 
+    <header class="site-header">
+        <a class="brand-mark" href="{{ url_for('home') }}" aria-label="TravelGuide home">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="TravelGuide logo">
+            <span>TravelGuide</span>
+        </a>
+        <button class="theme-toggle" type="button" data-theme-toggle>Dark Mode</button>
+    </header>
+
+    <main class="app-shell">
         <section class="hero">
+            <img class="hero-logo" src="{{ url_for('static', filename='images/logo.png') }}" alt="TravelGuide logo">
             <h1>Tourist Place Recommendation System</h1>
             <p class="intro">
                 Select your travel preferences and the expert system will recommend tourist places.
@@ -23,26 +36,26 @@
                 <h2>Explore Random Destinations</h2>
             </div>
             <div class="featured-grid">
-            {% for place in featured_places %}
-            <article class="destination-card">
-                <div class="destination-image-frame">
-                    <img src="{{ url_for('static', filename=place.image_file) }}" alt="{{ place.place }}">
-                </div>
-                <div class="destination-card-content">
-                    <span>{{ place.type }}</span>
-                    <h2>{{ place.place }}</h2>
-                    <p>{{ place.description }}</p>
-                    <strong>⭐ {{ place.rating }}/5</strong>
-                </div>
-            </article>
-            {% endfor %}
+                {% for place in featured_places %}
+                <article class="destination-card">
+                    <div class="destination-image-frame">
+                        <img src="{{ url_for('static', filename=place.image_file) }}" alt="{{ place.place }}">
+                    </div>
+                    <div class="destination-card-content">
+                        <span>{{ place.type }}</span>
+                        <h2>{{ place.place }}</h2>
+                        <p>{{ place.description }}</p>
+                        <strong>Rating {{ place.rating }}/5</strong>
+                    </div>
+                </article>
+                {% endfor %}
             </div>
         </section>
 
         <section class="panel">
             <form action="{{ url_for('recommend') }}" method="post" class="form-grid">
                 <label>
-                    <span>💰 Budget</span>
+                    <span>Budget</span>
                     <select name="budget" required>
                         <option value="Low">Low</option>
                         <option value="Medium" selected>Medium</option>
@@ -51,7 +64,7 @@
                 </label>
 
                 <label>
-                    <span>🌤 Climate</span>
+                    <span>Climate</span>
                     <select name="climate" required>
                         <option value="Hot">Hot</option>
                         <option value="Cold">Cold</option>
@@ -60,7 +73,7 @@
                 </label>
 
                 <label>
-                    <span>🏖 Place Type</span>
+                    <span>Place Type</span>
                     <select name="type" required>
                         <option value="Beach">Beach</option>
                         <option value="Hill Station">Hill Station</option>
@@ -72,7 +85,7 @@
                 </label>
 
                 <label>
-                    <span>🗓 Season</span>
+                    <span>Season</span>
                     <select name="season" required>
                         <option value="Summer">Summer</option>
                         <option value="Winter" selected>Winter</option>
@@ -81,7 +94,7 @@
                 </label>
 
                 <label>
-                    <span>🎯 Activity</span>
+                    <span>Activity</span>
                     <select name="activity" required>
                         <option value="Relaxation">Relaxation</option>
                         <option value="Adventure">Adventure</option>
@@ -92,7 +105,7 @@
                 </label>
 
                 <label>
-                    <span>↕ Sort Results</span>
+                    <span>Sort Results</span>
                     <select name="sort">
                         <option value="best_match">Best Match</option>
                         <option value="lowest_budget">Lowest Budget</option>
@@ -103,7 +116,6 @@
 
                 <button type="submit" data-submit-button>Recommend Place</button>
             </form>
-
         </section>
 
         <section class="panel estimator-panel">
@@ -113,7 +125,7 @@
             </div>
             <div class="estimator-grid">
                 <label>
-                    <span>📍 Destination</span>
+                    <span>Destination</span>
                     <select data-estimator-destination>
                         {% for place in places %}
                         <option value="{{ place.place }}" data-budget="{{ place.budget }}">{{ place.place }}</option>
@@ -121,11 +133,11 @@
                     </select>
                 </label>
                 <label>
-                    <span>🗓 Days</span>
+                    <span>Days</span>
                     <input type="number" min="1" max="30" value="3" data-estimator-days>
                 </label>
                 <label>
-                    <span>🚆 Transport</span>
+                    <span>Transport</span>
                     <select data-estimator-transport>
                         <option value="2500">Train / Bus</option>
                         <option value="6000">Flight</option>
@@ -133,7 +145,7 @@
                     </select>
                 </label>
                 <label>
-                    <span>🏨 Hotel Type</span>
+                    <span>Hotel Type</span>
                     <select data-estimator-hotel>
                         <option value="1800">Budget Hotel</option>
                         <option value="3500">Comfort Hotel</option>
@@ -157,13 +169,13 @@
         const savedTheme = localStorage.getItem("tprs-theme");
         if (savedTheme === "dark") {
             document.body.classList.add("dark-mode");
-            themeToggle.textContent = "☀ Light Mode";
+            themeToggle.textContent = "Light Mode";
         }
         themeToggle.addEventListener("click", () => {
             document.body.classList.toggle("dark-mode");
             const isDark = document.body.classList.contains("dark-mode");
             localStorage.setItem("tprs-theme", isDark ? "dark" : "light");
-            themeToggle.textContent = isDark ? "☀ Light Mode" : "🌙 Dark Mode";
+            themeToggle.textContent = isDark ? "Light Mode" : "Dark Mode";
         });
 
         const form = document.querySelector(".form-grid");
@@ -223,6 +235,13 @@
 
         [destination, days, transport, hotel].forEach((field) => field.addEventListener("input", updateEstimate));
         updateEstimate();
+
+        const splashScreen = document.querySelector("[data-splash-screen]");
+        window.addEventListener("load", () => {
+            window.setTimeout(() => {
+                splashScreen.classList.add("is-hidden");
+            }, 2300);
+        });
     </script>
 </body>
 </html>

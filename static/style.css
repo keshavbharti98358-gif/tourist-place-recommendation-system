@@ -44,10 +44,119 @@ body.dark-mode {
         linear-gradient(180deg, #0f172a 0%, #111827 58%, #1e293b 100%);
 }
 
+@keyframes logoFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes splashPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.95;
+    }
+    50% {
+        transform: scale(1.04);
+        opacity: 1;
+    }
+}
+
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 18px;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.24), transparent 26%),
+        linear-gradient(145deg, #07111f 0%, #0f172a 56%, #132f3b 100%);
+    color: #e5f0f6;
+    transition: opacity 0.55s ease, visibility 0.55s ease;
+}
+
+.splash-screen.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.splash-screen img {
+    width: 170px;
+    height: 170px;
+    border-radius: 28px;
+    object-fit: cover;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.24),
+        0 24px 80px rgba(56, 189, 248, 0.28);
+    animation: splashPulse 1.7s ease-in-out infinite;
+}
+
+.splash-screen p {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: min(100%, 1120px);
+    margin: 0 auto;
+    padding: 14px 20px 0;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--brand-dark);
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.brand-mark:hover {
+    transform: translateY(-1px) scale(1.02);
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.brand-mark img {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 22px rgba(15, 118, 110, 0.22);
+}
+
+.dark-mode .brand-mark {
+    border-color: #334155;
+    background: rgba(15, 23, 42, 0.86);
+    color: #f8fafc;
+}
+
 .app-shell {
     width: min(100%, 980px);
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 34px 20px 40px;
 }
 
 .theme-toggle {
@@ -66,6 +175,31 @@ body.dark-mode {
 .hero {
     margin-bottom: 22px;
     padding: 18px 0 4px;
+}
+
+.hero:not(.compact) {
+    text-align: center;
+}
+
+.hero-logo {
+    display: block;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 18px;
+    border-radius: 26px;
+    object-fit: cover;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.45),
+        0 20px 58px rgba(14, 116, 144, 0.28);
+    animation: logoFadeIn 0.8s ease both;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.hero-logo:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.6),
+        0 24px 70px rgba(14, 116, 144, 0.34);
 }
 
 .hero.compact {
@@ -103,11 +237,12 @@ h1 {
 .hero:not(.compact) h1 {
     color: #0f2f3d;
     background: none;
+    margin: 0 auto;
 }
 
 .intro {
     max-width: 680px;
-    margin: 14px 0 0;
+    margin: 14px auto 0;
     color: #475569;
     font-size: 1.05rem;
     line-height: 1.55;
@@ -759,6 +894,24 @@ dd {
 @media (max-width: 720px) {
     .app-shell {
         padding: 28px 14px;
+    }
+
+    .site-header {
+        padding: 10px 14px 0;
+    }
+
+    .brand-mark span {
+        display: none;
+    }
+
+    .brand-mark img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .hero-logo {
+        width: 100px;
+        height: 100px;
     }
 
     .panel {
