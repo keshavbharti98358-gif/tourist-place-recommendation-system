@@ -108,33 +108,25 @@ body.dark-mode {
 }
 
 .site-header {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-
-    width: min(calc(100% - 32px), 1080px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 18px;
-
-    padding: 0;
+    display: contents;
     background: transparent;
-    border: 0;
-    box-shadow: none;
-    pointer-events: none;
 }
 
 .brand-mark {
+    position: fixed;
+    top: 16px;
+    left: 20px;
+    z-index: 1000;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    min-width: 0;
-    padding: 6px 12px 6px 7px;
+    gap: 8px;
+    min-width: 48px;
+    height: 48px;
+    max-width: 48px;
+    overflow: hidden;
+    padding: 6px;
     border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
+    border-radius: 16px;
     background: rgba(8, 15, 32, 0.66);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -142,11 +134,18 @@ body.dark-mode {
     font-weight: 900;
     text-decoration: none;
     box-shadow: 0 14px 34px rgba(2, 6, 23, 0.18);
-    pointer-events: auto;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    transition:
+        max-width 0.28s ease,
+        border-radius 0.28s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
-.brand-mark:hover {
+.brand-mark:hover,
+.brand-mark:focus-visible {
+    max-width: 170px;
+    border-radius: 999px;
     transform: translateY(-1px) scale(1.02);
     background: rgba(255, 255, 255, 0.16);
 }
@@ -157,6 +156,22 @@ body.dark-mode {
     border-radius: 50%;
     object-fit: cover;
     box-shadow: 0 8px 22px rgba(15, 118, 110, 0.24);
+}
+
+.brand-mark span {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transform: translateX(-6px);
+    transition: max-width 0.28s ease, opacity 0.2s ease, transform 0.28s ease;
+}
+
+.brand-mark:hover span,
+.brand-mark:focus-visible span {
+    max-width: 100px;
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .dark-mode .brand-mark {
@@ -172,20 +187,25 @@ body.dark-mode {
 }
 
 .theme-toggle {
-    align-self: center;
-    flex: 0 0 auto;
-    width: auto;
-    min-height: 38px;
-    margin-left: auto;
-    padding: 0 16px;
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    min-height: 48px;
+    padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
+    border-radius: 16px;
     background: rgba(8, 15, 32, 0.66);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     color: #f8fafc;
+    font-size: 1.12rem;
+    line-height: 1;
     box-shadow: 0 14px 34px rgba(2, 6, 23, 0.18);
-    pointer-events: auto;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .theme-toggle:hover {
@@ -915,18 +935,16 @@ dd {
 
 @media (max-width: 720px) {
     .app-shell {
-        padding: 96px 14px 28px;
+        padding: 88px 14px 28px;
     }
 
-    .site-header {
+    .brand-mark {
         top: 12px;
-        width: min(calc(100% - 20px), 1080px);
-        padding: 8px;
-        gap: 10px;
-    }
-
-    .brand-mark span {
-        display: none;
+        left: 12px;
+        min-width: 44px;
+        height: 44px;
+        max-width: 44px;
+        border-radius: 14px;
     }
 
     .brand-mark img {
@@ -934,10 +952,19 @@ dd {
         height: 32px;
     }
 
+    .brand-mark:hover,
+    .brand-mark:focus-visible {
+        max-width: 150px;
+        border-radius: 999px;
+    }
+
     .theme-toggle {
-        min-height: 36px;
-        padding: 0 12px;
-        font-size: 0.9rem;
+        top: 12px;
+        right: 12px;
+        width: 44px;
+        min-height: 44px;
+        border-radius: 14px;
+        font-size: 1rem;
     }
 
     .hero-logo {
