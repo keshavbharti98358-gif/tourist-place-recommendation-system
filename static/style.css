@@ -215,8 +215,8 @@ body.dark-mode {
 }
 
 .hero {
-    margin-bottom: 22px;
-    padding: 18px 0 4px;
+    margin-bottom: 10px;
+    padding: 0px;
 }
 
 .hero:not(.compact) {
@@ -935,7 +935,7 @@ dd {
 
 @media (max-width: 720px) {
     .app-shell {
-        padding: 88px 14px 28px;
+        padding: 20px 14px 28px;
     }
 
     .brand-mark {
