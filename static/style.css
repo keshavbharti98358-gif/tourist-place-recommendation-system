@@ -183,7 +183,7 @@ body.dark-mode {
 .app-shell {
     width: min(100%, 980px);
     margin: 0 auto;
-    padding: 112px 20px 40px;
+    padding: 20px 20px 40px;
 }
 
 .theme-toggle {
